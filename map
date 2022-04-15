@@ -1,0 +1,150 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title>
+      Intro to MapView - Create a 2D map | Sample | ArcGIS API for JavaScript
+      4.23
+    </title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.23/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.23/"></script>
+
+    <script>
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/FeatureLayer",
+        "esri/widgets/BasemapGallery",
+        "esri/widgets/Legend",
+        "esri/widgets/ScaleBar",
+        "esri/widgets/Search",
+        "esri/widgets/LayerList",
+        "esri/widgets/Home",
+        "esri/widgets/Measurement",
+        "esri/widgets/Compass"
+      ], (Map, MapView, FeatureLayer,BasemapGallery, Legend, ScaleBar,Search,LayerList,Home,Measurement,Compass) => {
+        const layer = new FeatureLayer({
+          // URL to the service
+          url: "https://www.geosceneonline.cn/server/rest/services/Hosted/%E7%A6%8F%E5%BB%BA%E5%86%9C%E6%9E%97%E5%A4%A7%E5%AD%A6%E5%85%AC%E5%85%B1%E4%BA%8B%E4%BB%B6%E8%A6%81%E7%B4%A0%E5%9B%BE%E5%B1%82/FeatureServer",
+          title:"Incidents"
+        });
+        const layer1 = new FeatureLayer({
+          // URL to the service
+          url: "https://www.geosceneonline.cn/server/rest/services/Hosted/22%E8%B7%AF/FeatureServer",
+          title:"22路公车路线"
+        });
+       
+//map
+        const map = new Map({
+          basemap: "topo"
+        });
+
+        //map.layers.add(layer);
+        map.addMany([layer,layer1]);
+        
+        const view = new MapView({
+          container: "viewDiv",
+          map: map,
+          zoom: 13,
+          center: [119.27, 26.1] // longitude, latitude
+        });
+        
+        
+//left 
+         //图层列表
+         let layerList = new LayerList({
+            view: view,
+         });
+// Adds widget below other elements in the top left corner of the view
+         view.ui.add(layerList, {
+         position: "top-left"
+});
+        //指南针
+        let compass = new Compass({
+         view: view
+        });
+// adds the compass to the top left corner of the MapView
+    view.ui.add(compass, "bottom-left");
+        //图例
+        let legend = new Legend({
+          view: view,
+          layerInfos: [
+            {
+              layer: layer,
+              title: "事件类型"
+            }
+          ]
+        });
+        view.ui.add(legend, "top-left");
+        //比例尺
+        let scaleBar = new ScaleBar({
+          view: view,
+          style: "ruler",
+          unit: "metric"
+        });
+        //Add widget to the bottom left corner of the view
+        view.ui.add(scaleBar, {
+          position: "bottom-left"
+        });
+
+//right
+        //home键
+        let homeWidget = new Home({
+         view: view
+      });
+// adds the home widget to the top left corner of the MapView
+        view.ui.add(homeWidget, "top-right");
+        
+        //查询
+        const searchWidget = new Search({
+         view: view
+         });
+// Adds the search widget below other elements in
+// the top left corner of the view
+         view.ui.add(searchWidget, {
+         position: "top-right",
+         index: 2
+         });
+         
+         //底图库
+          let basemapGallery = new BasemapGallery({
+          view: view
+     });
+   // Add widget to the top right corner of the view
+      view.ui.add(basemapGallery, {
+         position: "top-right"
+});
+         //测量
+     const measurement = new Measurement({
+         view: view,
+        activeTool: "distance"
+});
+       view.ui.add(measurement, "top-left");
+        
+  
+
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="viewDiv"></div>
+  </body>
+</html>
